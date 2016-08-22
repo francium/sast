@@ -1,0 +1,68 @@
+#!/bin/bash
+
+set -euo pipefail
+IFS=$'\n\t'
+
+# save
+#   allow writing a msg until EOF
+#   append msg to .sast file in pwd
+#   along with number of lines written
+
+# load
+#   print last number of lines written
+#   tail command
+
+file=.savestate
+
+function help_and_exit {
+    echo "Usage: sast load | save | help"
+    exit 1
+}
+
+function load {
+    if [ -e $file ]
+    then
+        l=`tail -n 1 $file`
+        tail -n $((l+2)) $file | head -n $((l))
+    else
+        echo "No saved state"
+    fi
+}
+
+function save {
+    l=0
+    if [ -e $file ]
+    then
+        input="\n"
+    else
+        input=""
+    fi
+
+    while IFS='\n' read -r line || [[ -n "$line" ]]; do
+        input=$input$line"\n"
+        l=$((l+1))
+    done
+    echo -ne $input"\n$l\n" >> $file
+}
+
+if [ ! $# = "1" ]
+then
+    help_and_exit
+fi
+
+case $1 in
+    load)
+        load
+        ;;
+
+    save)
+        save
+        ;;
+
+    help)
+        echo "printing helpful stuff"
+        ;;
+
+    *)
+        help_and_exit
+esac
