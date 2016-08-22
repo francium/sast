@@ -1,24 +1,22 @@
 #!/bin/bash
 
+# Strict mode
 set -euo pipefail
 IFS=$'\n\t'
 
-# save
-#   allow writing a msg until EOF
-#   append msg to .sast file in pwd
-#   along with number of lines written
 
-# load
-#   print last number of lines written
-#   tail command
-
+# File to write to
 file=.savestate
 
+
+# Show help and exit
 function help_and_exit {
     echo "Usage: sast load | save | help"
     exit 1
 }
 
+
+# Display previous save
 function load {
     if [ -e $file ]
     then
@@ -29,6 +27,8 @@ function load {
     fi
 }
 
+
+# Write a save to file
 function save {
     l=0
     if [ -e $file ]
@@ -45,11 +45,14 @@ function save {
     echo -ne $input"\n$l\n" >> $file
 }
 
+
+# Ensure exactly one argument is given
 if [ ! $# = "1" ]
 then
     help_and_exit
 fi
 
+# Match argument
 case $1 in
     load)
         load
@@ -60,9 +63,6 @@ case $1 in
         ;;
 
     help)
-        echo "printing helpful stuff"
-        ;;
-
     *)
         help_and_exit
 esac
