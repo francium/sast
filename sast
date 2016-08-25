@@ -62,7 +62,6 @@ case $1 in
         save
         ;;
 
-    help)
     *)
         help_and_exit
 esac
